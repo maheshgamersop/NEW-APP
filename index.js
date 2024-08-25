@@ -20,7 +20,8 @@ const io = setupSocketIO(server);
 
 // MIDDLEWARES
 app.use(cors(
-  origin: "https://chat-app-p4n5.onrender.com"
+  origin: "https://chat-app-p4n5.onrender.com",
+  
 )); // Allow all origins for simplicity
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
