@@ -9,7 +9,7 @@ import cors from 'cors';
 import setupSocketIO from './socket.js'; // Import socket setup
 
 connect(); // Connecting to the database
-
+console.log("js")
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
