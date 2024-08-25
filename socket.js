@@ -1,10 +1,11 @@
+console.log("socket")
 // socket.js
 import { Server } from 'socket.io';
 
 const setupSocketIO = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "",
+      origin: "https://chat-app-p4n5.onrender.com",
       methods: ["GET", "POST"],
     }
   });
