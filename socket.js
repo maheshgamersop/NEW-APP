@@ -3,12 +3,7 @@ console.log("socket")
 import { Server } from 'socket.io';
 
 const setupSocketIO = (server) => {
-  const io = new Server(server, {
-    cors: {
-      origin: "https://chat-app-p4n5.onrender.com",
-      methods: ["GET", "POST"],
-    }
-  });
+  const io = new Server(server);
 
   io.on('connection', (socket) => {
     console.log('A user connected');
