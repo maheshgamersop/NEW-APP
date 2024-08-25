@@ -4,7 +4,7 @@ import { Server } from 'socket.io';
 const setupSocketIO = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://chat-app-p4n5.onrender.com",
+      origin: "",
       methods: ["GET", "POST"],
     }
   });
