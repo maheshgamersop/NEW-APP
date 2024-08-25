@@ -19,9 +19,11 @@ const server = http.createServer(app);
 const io = setupSocketIO(server);
 
 // MIDDLEWARES
-app.use(cors(
-  origin: process.env.url
-)); // Allow all origins for simplicity
+app.use(cors({
+  origin: "https://chat-app-p4n5.onrender.com",
+  credentials: true,
+})); // Configure CORS
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
