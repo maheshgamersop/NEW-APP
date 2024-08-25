@@ -1,10 +1,9 @@
-// socket.js
 import { Server } from 'socket.io';
 
 const setupSocketIO = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.abc,
+      origin: process.env.url,
       methods: ["GET", "POST"],
     }
   });
