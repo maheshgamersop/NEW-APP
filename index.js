@@ -20,7 +20,7 @@ const io = setupSocketIO(server);
 
 // MIDDLEWARES
 app.use(cors({
-  origin: "https://chat-app-p4n5.onrender.com",
+  origin: "https://6f442fe1-7375-46a2-8168-582717bd5cf1-00-100ylzjvhoza.pike.replit.dev",
   credentials: true,
 })); // Configure CORS
 

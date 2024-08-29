@@ -15,7 +15,7 @@ const UserSchema = mongoose.Schema({
   },
   profile: {
     type: String,
-    default: 'https://i.ibb.co/Fz3bJxY/default-user-profile.png'
+    default: 'https://i.postimg.cc/cCPwqGQz/discord-fake-avatar-decorations-1724674350651.gif'
   },
   phone_num: {
     type: String,

@@ -74,6 +74,28 @@ req.io.emit('newChat', fullChat)
   }
 });
 
+routes.post("/chat-del", check, async (req, res) => {
+  const { chatId } = req.body;
+  if (!chatId) {
+    return res.json({ message: "No chat ID  found"})
+  }
+  try {
+    
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found"});
+    }
+    if (chat.users.includes(req.user._id)){
+      await Messages.deleteMany({ chat: chatId})
+      await Chat.findByIdAndDelete(chatId);
+      res.status(200).json({ message: "Chat deleted successfully"});
+    }
+    
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 routes.get("/chat", check, async (req, res) => {
   try {
     const chats = await Chat.find({
@@ -82,7 +104,7 @@ routes.get("/chat", check, async (req, res) => {
       .populate("users", "-password")
       .populate("latestMessage")
       .sort({ updatedAt: -1 });
-
+console.log(chats)
     res.status(200).json(chats);
   } catch (error) {
     console.log(error);
@@ -137,7 +159,7 @@ routes.post("/create/message", check, async (req, res) => {
     // Emit 'newUpdate' to let the backend know that a new message has been created
     //emiting setting
 
-    req.io.emit("newUpdate", message);
+    req.io.to(chatId).emit("newUpdate", message);
 
     res.status(200).json(message);
   } catch (error) {
@@ -145,7 +167,21 @@ routes.post("/create/message", check, async (req, res) => {
     res.status(500).json({ message: "Error sending message" });
   }
 });
-
+routes.post("/delete/message", check, async (req, res)=>{
+  const {msgId} = req.body;
+  if (!msgId){
+    return res.status(400).json({message: "Chat and message Id are required"})
+  }
+  try {
+   const msg = await Messages.findByIdAndDelete(msgId)
+    if(!msg){
+      return res.status(404).json({message: "Message not found"})
+    }
+    res.status(200).json({message: "Message deleted successfully"})
+  } catch (error) {
+    
+  }
+})
 routes.get("/chat/:chatId", check, async (req, res) => {
   const { chatId } = req.params;
 
