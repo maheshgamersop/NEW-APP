@@ -7,14 +7,28 @@ import userRoutes from './Routes/userRoutes.js';
 import chatRoutes from './Routes/chatRoutes.js'; // Chat routes
 import cors from 'cors';
 import setupSocketIO from './socket.js'; // Import socket setup
-
+import axios from 'axios'
 connect(); // Connecting to the database
 console.log("js")
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
+//AUTO UPDATE SERVER
+const url = 'https://chat.gangsta.wuaze.com';  // Replace this with your desired URL
 
+// Function to visit the URL
+async function visitLink() {
+  try {
+    const response = await axios.get(url);
+    console.log(`Visited: ${url} - Status: ${response.status}`);
+  } catch (error) {
+    console.error(`Error visiting ${url}:`, error.message);
+  }
+}
+
+// Visit the link every 10 seconds (10000 milliseconds)
+setInterval(visitLink, 80000); 
 // Initialize Socket.IO
 const io = setupSocketIO(server);
 
