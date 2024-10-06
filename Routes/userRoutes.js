@@ -5,26 +5,24 @@ import { generateToken } from '../jwt/genrateToken.js';
 import upload from '../models/upload.js';
 
 const routes = express.Router();
-
 // SIGN UP ROUTE
 routes.post('/signup', upload.single('profile'), async (req, res) => {
     const { name, email, password, phone_num } = req.body;
-
+    
     if (!name || !email || !password || !phone_num) {
         return res.status(400).json({ message: 'Please fill all the fields' });
     }
-
+    const existedUser = await User.findOne({ email})
+    if(existedUser) return res.status(400).json({ message: 'User already exist'});
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-
         const newUser = await User.create({
             name,
             email,
-            password: hashedPassword, // Store hashed password
+            password, // Store hashed password
             profile: req.file?.path, // Handle file path if available
             phone_num
         });
-
+        console.log(newUser)
         const data = {
             name: newUser.name,
             email: newUser.email,
@@ -38,14 +36,11 @@ routes.post('/signup', upload.single('profile'), async (req, res) => {
             token: generateToken(newUser._id)
         });
     } catch (error) {
-        // Check for MongoDB duplicate key error
-        if (error.code === 11000) { // 11000 is the error code for duplicate keys
-            return res.status(400).json({ message: 'Email already exists' });
-        }
-        console.log(error);
-        return res.status(500).json({ message: 'INTERNAL SERVER ERROR' });
+        if(error.code === 11000) return res.status(400).json({ message: 'User already exist'})
+        return res.status(500).json({ message: 'Something went wrong! please try again later.'})
     }
-});
+        
+    });
 
 // LOGIN ROUTE
 routes.post('/login', async (req, res) => {
