@@ -1,8 +1,7 @@
 import express from 'express';
-import user from '../models/user.js';
+import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { generateToken } from '../jwt/genrateToken.js';
-
+import { generateToken } from '../jwt/generateToken.js';
 import upload from '../models/upload.js';
 
 const routes = express.Router();
@@ -16,17 +15,12 @@ routes.post('/signup', upload.single('profile'), async (req, res) => {
     }
 
     try {
-        /*const existingUser = await user.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already exists' });
-       }*/
-
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await user.create({
+        const newUser = await User.create({
             name,
             email,
-            password,
+            password: hashedPassword, // Store hashed password
             profile: req.file?.path, // Handle file path if available
             phone_num
         });
@@ -44,7 +38,11 @@ routes.post('/signup', upload.single('profile'), async (req, res) => {
             token: generateToken(newUser._id)
         });
     } catch (error) {
-        console.log(error)
+        // Check for MongoDB duplicate key error
+        if (error.code === 11000) { // 11000 is the error code for duplicate keys
+            return res.status(400).json({ message: 'Email already exists' });
+        }
+        console.log(error);
         return res.status(500).json({ message: 'INTERNAL SERVER ERROR' });
     }
 });
@@ -58,32 +56,30 @@ routes.post('/login', async (req, res) => {
     }
 
     try {
-        const users = await user.findOne({ email });
-        if (!users) {
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(400).json({ message: 'Email does not exist' });
         }
 
-        const isPasswordMatch = await bcrypt.compare(password, users.password);
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({ message: 'Password does not match' });
         }
 
         const data = {
-            name: users.name,
-            email: users.email,
-            _id: users._id,
-            phone_num: users.phone_num,
+            name: user.name,
+            email: user.email,
+            _id: user._id,
+            phone_num: user.phone_num,
         };
 
         return res.status(200).json({
             message: 'Login successful',
             data,
-            token: generateToken(users._id)
-            
+            token: generateToken(user._id)
         });
-        console.log("hit")
     } catch (error) {
-        console.log(error)
+        console.log(error);
         return res.status(500).json({ message: 'INTERNAL SERVER ERROR' });
     }
 });
