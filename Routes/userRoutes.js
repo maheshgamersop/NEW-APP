@@ -1,7 +1,7 @@
 import express from 'express';
 import User from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { generateToken } from '../jwt/generateToken.js';
+import { generateToken } from '../jwt/genrateToken.js';
 import upload from '../models/upload.js';
 
 const routes = express.Router();
