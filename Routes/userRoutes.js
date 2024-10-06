@@ -28,6 +28,7 @@ routes.post('/signup', upload.single('profile'), async (req, res) => {
             email: newUser.email,
             _id: newUser._id,
             phone_num: newUser.phone_num,
+            profile: newUser.profile
         };
 
         return res.status(201).json({
